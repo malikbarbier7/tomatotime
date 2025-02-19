@@ -29,7 +29,7 @@ function App() {
                 ))}
               </div>
               <div
-                className="w-full text-xs text-right text-black mt-1 pr-3" 
+                className="w-full text-xs text-right text-black mt-1 pr-3 font-press" 
               >
                 made by @M with love
               </div>
