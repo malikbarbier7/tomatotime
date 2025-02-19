@@ -17,19 +17,19 @@ function App() {
         <Route
           path="/"
           element={
-            <div className="flex flex-col items-center justify-center m-0 bg-black min-h-screen">
+            <div className="flex flex-col items-center justify-center m-0 bg-white min-h-screen">
               <div className="grid grid-cols-2 gap-1 mb-0 mt-2">
                 {backgrounds.map((bg, i) => (
                   <Link to={`/timer/${times[i]}`} key={i}>
                     <div
-                      className="w-[140px] h-[120px] bg-cover bg-center rounded-lg"
+                      className="w-[140px] h-[120px] bg-cover bg-center rounded-lg border-2 border-black"
                       style={{ backgroundImage: `url(${bg})` }}
                     />
                   </Link>
                 ))}
               </div>
               <div
-                className="w-full text-xs text-right text-white mt-1 pr-3 font-press" 
+                className="w-full text-xs text-right text-black mt-1 pr-3 font-press" 
               >
                 made by @M with love
               </div>
