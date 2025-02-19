@@ -23,13 +23,14 @@ function App() {
                   <Link to={`/timer/${times[i]}`} key={i}>
                     <div
                       className="w-[140px] h-[120px] bg-cover bg-center rounded-lg border-2 border-black"
-                      style={{ backgroundImage: `url(${bg})` }}
+                      style={{ backgroundImage: `url(${bg})`, fontFamily: 'PressStart2P, sans-serif' }}
                     />
                   </Link>
                 ))}
               </div>
               <div
-                className="w-full text-xs text-right text-black mt-1 pr-3 font-press" 
+                className="w-full text-xs transform scale-75 text-right text-black mt-1 pr-3"
+                style={{ fontFamily: 'PressStart2P, sans-serif' }}
               >
                 made by @M with love
               </div>

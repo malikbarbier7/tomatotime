@@ -73,6 +73,7 @@ function Timer() {
     backgroundImage: `url(${backgroundImage})`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
+    fontFamily: 'PressStart2P, sans-serif',
   };
 
   return (
