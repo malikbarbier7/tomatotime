@@ -26,6 +26,7 @@ function Timer() {
   const [isActive, setIsActive] = useState(false);
   const [currentType, setCurrentType] = useState('work');
   const [backgroundImage, setBackgroundImage] = useState(getInitialBackgroundImage(initialTime));
+  const [sessionCount, setSessionCount] = useState(0);
 
   useEffect(() => {
     let interval = null;
@@ -36,12 +37,18 @@ function Timer() {
       }, 1000);
     } else if (time === 0) {
       setIsActive(false);
+      if (currentType === 'work') {
+        setSessionCount((prevCount) => prevCount + 1);
+        handleRest();
+      } else {
+        handleStart();
+      }
     }
 
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isActive, time]);
+  }, [isActive, time, currentType]);
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
@@ -58,14 +65,36 @@ function Timer() {
   const handleStop = () => {
     setIsActive(false);
     setTime(initialTime * 60);
-    setBackgroundImage(getInitialBackgroundImage(initialTime)); // Reset to initial image
+    setCurrentType('work');
+    setSessionCount(0);
+    setBackgroundImage(getInitialBackgroundImage(initialTime));
   };
 
   const handleRest = () => {
     setIsActive(false);
-    setTime(5 * 60); // 5 minutes break
+    if (sessionCount > 0 && (sessionCount + 1) % 4 === 0) {
+      setTime(15 * 60); // 15 minutes break after 4 sessions
+    } else {
+      setTime(5 * 60); // 5 minutes break
+    }
     setCurrentType('break');
-    // Keep the background image consistent with the initial timer setting
+    setBackgroundImage(getInitialBackgroundImage(initialTime));
+  };
+
+  const handleSkip = () => {
+    setIsActive(false);
+    if (currentType === 'work') {
+      if (sessionCount > 0 && (sessionCount + 1) % 4 === 0) {
+        setTime(15 * 60); // Skip to a 15-minute break after 4 sessions
+      } else {
+        setTime(5 * 60); // Skip to a 5-minute break
+      }
+      setSessionCount((prevCount) => prevCount + 1);
+      setCurrentType('break');
+    } else {
+      setTime(initialTime * 60); // Skip to the next work session
+      setCurrentType('work');
+    }
     setBackgroundImage(getInitialBackgroundImage(initialTime));
   };
 
@@ -87,8 +116,8 @@ function Timer() {
           <button onClick={isActive ? handlePause : handleStart} className="bg-blue-500 text-white py-2 rounded">
             {isActive ? 'Pause' : 'Start'}
           </button>
-          <button onClick={handleRest} className="bg-green-200 hover:bg-green-300 py-2 rounded">
-            Rest
+          <button onClick={handleSkip} className="bg-green-200 hover:bg-green-300 py-2 rounded">
+            Skip
           </button>
           <button onClick={handleStop} className="bg-gray-300 py-2 rounded">
             Reset
