@@ -27,6 +27,7 @@ function Timer() {
   const [currentType, setCurrentType] = useState('work');
   const [backgroundImage, setBackgroundImage] = useState(getInitialBackgroundImage(initialTime));
   const [sessionCount, setSessionCount] = useState(0);
+  const [hasStarted, setHasStarted] = useState(false); // Track if session has started
 
   useEffect(() => {
     let interval = null;
@@ -38,7 +39,6 @@ function Timer() {
     } else if (time === 0) {
       setIsActive(false);
       if (currentType === 'work') {
-        setSessionCount((prevCount) => prevCount + 1);
         handleRest();
       } else {
         handleStart();
@@ -57,6 +57,10 @@ function Timer() {
   };
 
   const handleStart = () => {
+    if (!isActive && currentType === 'work' && !hasStarted) {
+      setSessionCount((prevCount) => prevCount + 1);
+      setHasStarted(true);
+    }
     setIsActive(true);
   };
 
@@ -67,13 +71,16 @@ function Timer() {
     setTime(initialTime * 60);
     setCurrentType('work');
     setSessionCount(0);
+    setHasStarted(false);
     setBackgroundImage(getInitialBackgroundImage(initialTime));
   };
 
   const handleRest = () => {
     setIsActive(false);
-    if (sessionCount > 0 && (sessionCount + 1) % 4 === 0) {
+    setHasStarted(false);
+    if (sessionCount > 0 && sessionCount % 4 === 0) {
       setTime(15 * 60); // 15 minutes break after 4 sessions
+      setSessionCount(0); // Reset session count after long break
     } else {
       setTime(5 * 60); // 5 minutes break
     }
@@ -83,13 +90,13 @@ function Timer() {
 
   const handleSkip = () => {
     setIsActive(false);
+    setHasStarted(false);
     if (currentType === 'work') {
-      if (sessionCount > 0 && (sessionCount + 1) % 4 === 0) {
+      if (sessionCount > 0 && sessionCount % 4 === 0) {
         setTime(15 * 60); // Skip to a 15-minute break after 4 sessions
       } else {
         setTime(5 * 60); // Skip to a 5-minute break
       }
-      setSessionCount((prevCount) => prevCount + 1);
       setCurrentType('break');
     } else {
       setTime(initialTime * 60); // Skip to the next work session
@@ -113,19 +120,22 @@ function Timer() {
           {currentType === 'work' ? 'Work Time' : 'Break Time'}
         </div>
         <div className="grid grid-cols-3 gap-2">
-          <button onClick={isActive ? handlePause : handleStart} className="bg-blue-500 text-white py-2 rounded">
+          <button onClick={isActive ? handlePause : handleStart} className="bg-blue-500 hover:bg-blue-700 text-white py-2 rounded">
             {isActive ? 'Pause' : 'Start'}
           </button>
           <button onClick={handleSkip} className="bg-green-200 hover:bg-green-300 py-2 rounded">
             Skip
           </button>
-          <button onClick={handleStop} className="bg-gray-300 py-2 rounded">
+          <button onClick={handleStop} className="bg-gray-300 hover:bg-gray-400 py-2 rounded">
             Reset
           </button>
         </div>
         <button onClick={() => navigate('/')} className="bg-gray-300 py-2 rounded mt-2">
           Back
         </button>
+        <div className="text-center mt-2">
+          Session: {sessionCount % 4 === 0 && sessionCount !== 0 ? 4 : sessionCount % 4}/4
+        </div>
       </div>
     </div>
   );
