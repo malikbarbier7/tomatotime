@@ -80,7 +80,6 @@ function Timer() {
     setHasStarted(false);
     if (sessionCount > 0 && sessionCount % 4 === 0) {
       setTime(15 * 60); // 15 minutes break after 4 sessions
-      setSessionCount(0); // Reset session count after long break
     } else {
       setTime(5 * 60); // 5 minutes break
     }
@@ -101,6 +100,9 @@ function Timer() {
     } else {
       setTime(initialTime * 60); // Skip to the next work session
       setCurrentType('work');
+      if (sessionCount % 4 === 0) {
+        setSessionCount(0); // Reset session count after long break
+      }
     }
     setBackgroundImage(getInitialBackgroundImage(initialTime));
   };
