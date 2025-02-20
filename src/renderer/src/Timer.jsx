@@ -8,6 +8,10 @@ import background2 from './assets/images/background2-2.png';
 import background3 from './assets/images/background3-3.png';
 import background4 from './assets/images/background4-4.png';
 
+// Import sounds
+import notificationSession from './assets/sounds/notificationsession.mp3';
+import notificationBreak from './assets/sounds/notificationbreak.mp3';
+
 function Timer() {
   const { minutes } = useParams();
   const navigate = useNavigate();
@@ -39,8 +43,10 @@ function Timer() {
     } else if (time === 0) {
       setIsActive(false);
       if (currentType === 'work') {
+        playSound(notificationSession);
         handleRest();
       } else {
+        playSound(notificationBreak);
         handleStart();
       }
     }
@@ -49,6 +55,12 @@ function Timer() {
       if (interval) clearInterval(interval);
     };
   }, [isActive, time, currentType]);
+
+  const playSound = (sound) => {
+    const audio = new Audio(sound);
+    audio.volume = 0.3; // Set volume to 50%
+    audio.play();
+  };
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
@@ -91,6 +103,7 @@ function Timer() {
     setIsActive(false);
     setHasStarted(false);
     if (currentType === 'work') {
+      playSound(notificationSession); // Play session end sound
       if (sessionCount > 0 && sessionCount % 4 === 0) {
         setTime(15 * 60); // Skip to a 15-minute break after 4 sessions
       } else {
@@ -98,6 +111,7 @@ function Timer() {
       }
       setCurrentType('break');
     } else {
+      playSound(notificationBreak); // Play break end sound
       setTime(initialTime * 60); // Skip to the next work session
       setCurrentType('work');
       if (sessionCount % 4 === 0) {
