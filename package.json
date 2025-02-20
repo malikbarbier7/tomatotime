@@ -4,7 +4,7 @@
   "description": "A Pomodoro Timer application build with React",
   "main": "./out/main/index.js",
   "author": "example.com",
-  "homepage": "https://github.com/malikbarbier7",
+  "homepage": "./",
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
