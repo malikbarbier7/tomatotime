@@ -4,9 +4,15 @@ const path = require("path");
 const utils = require("@electron-toolkit/utils");
 const icon = path.join(__dirname, "../../resources/icon.png");
 function createWindow() {
+  const primaryDisplay = electron.screen.getPrimaryDisplay();
+  const { width } = primaryDisplay.workAreaSize;
   const mainWindow = new electron.BrowserWindow({
     width: 300,
     height: 300,
+    x: width - 300,
+    // Position the window at the right edge
+    y: 0,
+    // Position the window at the top
     show: false,
     resizable: false,
     autoHideMenuBar: true,
