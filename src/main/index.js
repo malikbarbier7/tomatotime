@@ -1,11 +1,17 @@
 import { app, shell, BrowserWindow, ipcMain, screen } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/icon.png?asset'
 
 function createWindow() {
   const primaryDisplay = screen.getPrimaryDisplay()
   const { width } = primaryDisplay.workAreaSize
+
+  // Determine the correct icon based on the platform
+  const iconPath = process.platform === 'darwin'
+    ? join(__dirname, '../renderer/src/assets/images/logotomatotime.icns')
+    : process.platform === 'win32'
+    ? join(__dirname, '../renderer/src/assets/images/logotomatotime.ico')
+    : join(__dirname, '../renderer/src/assets/images/logotomatotime.png')
 
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -16,7 +22,7 @@ function createWindow() {
     show: false,
     resizable: false,
     autoHideMenuBar: true,
-    ...(process.platform === 'linux' ? { icon } : {}),
+    icon: iconPath, // Use the determined icon path
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false

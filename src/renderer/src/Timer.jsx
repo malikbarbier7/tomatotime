@@ -34,6 +34,11 @@ function Timer() {
   const [hasStarted, setHasStarted] = useState(false); // Track if session has started
 
   useEffect(() => {
+    // Request notification permission on mount
+    if (Notification.permission !== 'granted') {
+      Notification.requestPermission();
+    }
+
     let interval = null;
 
     if (isActive && time > 0) {
@@ -44,9 +49,11 @@ function Timer() {
       setIsActive(false);
       if (currentType === 'work') {
         playSound(notificationSession);
+        sendNotification('Session Complete', 'Time for a break!');
         handleRest();
       } else {
         playSound(notificationBreak);
+        sendNotification('Break Over', 'Back to work!');
         handleStart();
       }
     }
@@ -58,8 +65,14 @@ function Timer() {
 
   const playSound = (sound) => {
     const audio = new Audio(sound);
-    audio.volume = 0.3; // Set volume to 50%
+    audio.volume = 0.3; // Set volume to 30%
     audio.play();
+  };
+
+  const sendNotification = (title, message) => {
+    if (Notification.permission === 'granted') {
+      new Notification(title, { body: message });
+    }
   };
 
   const formatTime = (seconds) => {
@@ -104,6 +117,7 @@ function Timer() {
     setHasStarted(false);
     if (currentType === 'work') {
       playSound(notificationSession); // Play session end sound
+      sendNotification('Session Skipped', 'Skipping to break!');
       if (sessionCount > 0 && sessionCount % 4 === 0) {
         setTime(15 * 60); // Skip to a 15-minute break after 4 sessions
       } else {
@@ -112,6 +126,7 @@ function Timer() {
       setCurrentType('break');
     } else {
       playSound(notificationBreak); // Play break end sound
+      sendNotification('Break Skipped', 'Skipping to work!');
       setTime(initialTime * 60); // Skip to the next work session
       setCurrentType('work');
       if (sessionCount % 4 === 0) {
